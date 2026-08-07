@@ -212,7 +212,9 @@ summary(model2)$varcomp
 ## units!R           1.000000        NA       NA     F   0
 ``` 
 
-In fact since `SEX` effects were previously contributing to the residual variance of the model, our estimate of $V_R$ (denoted `units!R` in the output) is now slightly lower than before. This has an important consequence for estimating heritability since if we calculate VPVP​ as VAVA​+VRVR​ then as we include fixed effects we will soak up more residual variance driving VPVP​. Assuming that VAVA​ is more or less unaffected by the fixed effects fitted then as VPVP​ goes down we expect our estimate of h2h2 will go up:
+In fact since `SEX` effects were previously contributing to the residual variance of the model, our estimate of $V_R$ (denoted `units!R` in the output) is now slightly lower than before.
+This has an important consequence for estimating heritability since if we calculate $V_P$ as $V_A+V_R$ then as we include fixed effects we will soak up more residual variance driving $V_P$.
+Assuming that $V_A$ is more or less unaffected by the fixed effects fitted then as $V_P$ goes down we expect our estimate of $h^2$ will go up:
 
 ``` r
 vpredict(model2, h2.BWT ~ V1 / (V1 + V2))
@@ -221,7 +223,8 @@ vpredict(model2, h2.BWT ~ V1 / (V1 + V2))
 ##        Estimate         SE
 ## h2.BWT 0.510171 0.07432388
 ``` 
-Here h2 has increased slightly from 0.47 to 0.51. Which is the better estimate? It depends on what your question is. The first is an estimate of the proportion of variance in birth weight explained by additive effects, the latter is an estimate of the proportion of variance in birth weight after conditioning on sex that is explained by additive effects.
+Here $h^2$ has increased slightly from `0.47` to `0.51`. Which is the better estimate? It depends on what your question is.
+The first is an estimate of the proportion of variance in birth weight explained by additive effects, the latter is an estimate of the proportion of variance in birth weight after conditioning on sex that is explained by additive effects.
 
 ### 6) Adding random effects
 
@@ -264,9 +267,12 @@ summary(model3)$varcomp
 ## units!R          1.0000000        NA       NA     F   0
 ``` 
 
-Here the variance in BWT explained by BYEAR is 0.886 and, based on the z.ratio, appears to be significant. Thus we would conclude that year-to-year variation (e.g., in weather, resource abundance) contributes to VPVP​. Note that although VAVA​ has changed somewhat, as most of what is now partitioned as a birth year effect was previously partitioned as VRVR​. Thus what we have really done here is to partition environmental effects into those arising from year-to-year differences versus everything else, and we do not really expect much change in h2h2 (since now h2=VA/(VA+VBY+VR)h2=VA​/(VA​+VBY​+VR​)).
+Here the variance in `BWT` explained by `BYEAR` is `0.886` and, based on the `z.ratio`, appears to be significant.
+Thus we would conclude that year-to-year variation (e.g., in weather, resource abundance) contributes to $V_P$.
+Note that although $V_A$ has changed somewhat, as most of what is now partitioned as a birth year effect was previously partitioned as $V_R$.
+Thus what we have really done here is to partition environmental effects into those arising from year-to-year differences versus everything else, and we do not really expect much change in $h^2$ (since now $h^2=V_A/(V_A+V_{BY}+V_R)$).
 
-However, we get a somewhat different result if we also add a random effect of MOTHER to test for maternal effects:
+However, we get a somewhat different result if we also add a random effect of `MOTHER` to test for maternal effects:
 
 ``` r
 model4 <- asreml(fixed = BWT ~ 1 + SEX, 
@@ -304,7 +310,9 @@ summary(model4)$varcomp
 ## units!R          1.0000000        NA       NA     F   0
 ``` 
 
-Here partitioning of significant maternal variance has resulted in a further decrease in VRVR​ but also a decrease in VAVA​. The latter is because maternal effects of the sort we simulated (fixed differences between mothers) will have the consequence of increasing similarity among maternal siblings. Consequently they can look very much like additive genetic effects and if present, but unmodelled, represent a type of “common environment effect”" that can - and will - cause upward bias in VAVA​ and so h2h2.
+Here partitioning of significant maternal variance has resulted in a further decrease in $V_R$ but also a decrease in $V_A$.
+The latter is because maternal effects of the sort we simulated (fixed differences between mothers) will have the consequence of increasing similarity among maternal siblings.
+Consequently they can look very much like additive genetic effects and if present, but unmodelled, represent a type of "common environment effect" that can - and will - cause upward bias in $V_A$ and so $h^2$.
 
 ### 7) Testing significance of random effects
 
@@ -320,7 +328,7 @@ model4$loglik
 ## [1] -1094.815
 ``` 
 
-shows that the model including maternal identity has a log-likelihood of -1094.815, and
+shows that the model including maternal identity has a log-likelihood of `-1094.815`, and
 
 ``` r
 model3$loglik
@@ -328,9 +336,10 @@ model3$loglik
 ``` 
 ## [1] -1113.772
 ``` 
-shows that the model excluding maternal identity has a log-likelihood of -1113.772.
+shows that the model excluding maternal identity has a log-likelihood of `-1113.772`.
 
-A test statistic equal to twice the absolute difference in these log-likelihoods is assumed to be distributed as Chi square with one degree of freedom. In this case we would conclude that the maternal effects are highly significant since: 2 ×× (-1094.8145793 - -1113.7719147) equals 37.9146708, and the p-value that comes with this is:
+A test statistic equal to twice the absolute difference in these log-likelihoods is assumed to be distributed as Chi square with one degree of freedom.
+In this case we would conclude that the maternal effects are highly significant since: `2 * (-1094.8145793 - -1113.7719147)` = `37.9146708`, and the p-value that comes with this is:
 
 ``` r
 1 - pchisq(2 * (model4$loglik - model3$loglik),1)
@@ -346,17 +355,25 @@ This tutorial will demonstrate how to run a multivariate animal model using the 
 
 ### 1) Scenario
 
-Since natural selection rarely acts on single traits, to understand how birth weight might evolve in our population of gryphons, we may also want to think about possible covariance with other traits. If tarsus length at fledging is also under positive selection, what implications does this have for birth weight and vice versa? If the two traits are positively genetically correlated then this will facilitate evolution of larger size (since response of one trait will induce a positively correlated response in the other). If there is negative genetic covariance then this could act as an evolutionary constraint.
+Since natural selection rarely acts on single traits, to understand how birth weight might evolve in our population of gryphons, we may also want to think about possible covariance with other traits.
+If tarsus length at fledging is also under positive selection, what implications does this have for birth weight and vice versa?
+If the two traits are positively genetically correlated then this will facilitate evolution of larger size (since response of one trait will induce a positively correlated response in the other).
+If there is negative genetic covariance then this could act as an evolutionary constraint.
 
-Using multivariate models allows the estimation of parameters relating to each trait alone (i.e. VAVA​, h2h2, etc), but also yields estimates of covariance components between traits. These include the (additive) genetic covariance COVACOVA​ which is often rescaled to give the additive genetic correlation rArA​. However, covariance can also arise through other random effects (e.g. maternal covariance) and these sources can also be explicitly modelled in a bivariate analysis.
+Using multivariate models allows the estimation of parameters relating to each trait alone (i.e. $V_A$, $h^2$, etc), but also yields estimates of covariance components between traits.
+These include the (additive) genetic covariance $COV_A$ which is often rescaled to give the additive genetic correlation $r_A$.
+However, covariance can also arise through other random effects (e.g. maternal covariance) and these sources can also be explicitly modelled in a bivariate analysis.
 
 ### 2) Data files
 
-Pedigree and phenotypic data files are the same as those used in tutorial 1 (i.e, gryphonped.txt and gryphon.txt respectively).
+Pedigree and phenotypic data files are the same as those used in tutorial 1 (i.e, `gryphonped.txt` and `gryphon.txt` respectively).
 
 ### 3) Running the model
 
-For running multivariate analyses in ASReml-R, the code is slightly more complex than for the univariate case. This is because ASReml-R allows us to make different assumptions about the way in which traits might be related and so we need to explicitly code a model of the (co)variance structure we want to fit. We have also specified some starting values. These are can be very approximate guestimates, but having reasonable starting values can aid convergence. Finally, we have increased the default maximum number of iterations (maxiter) which can help to achieve convergence for more complicated models.
+For running multivariate analyses in `ASReml-R`, the code is slightly more complex than for the univariate case.
+This is because `ASReml-R` allows us to make different assumptions about the way in which traits might be related and so we need to explicitly code a model of the (co)variance structure we want to fit.
+We have also specified some starting values. These are can be very approximate guestimates, but having reasonable starting values can aid convergence.
+Finally, we have increased the default maximum number of iterations (`maxiter`) which can help to achieve convergence for more complicated models.
 
 ``` r
 modela<-asreml(fixed = cbind(BWT, TARSUS) ~ trait,
@@ -381,7 +398,8 @@ modela<-asreml(fixed = cbind(BWT, TARSUS) ~ trait,
 ##  9     -2679.741           1.0   1535 09:47:32    0.0
 ``` 
 
-This has fitted a bivariate model of BWT and TARSUS, with the mean for each of the traits as a fixed effect (trait). The additive genetic variance-covariance matrix (GG) is unstructured (us; i.e. all elements are free to vary) and the starting values for VAVA​ for BWT, COVACOVA​ between BWT and TARSUS, and VAVA​ for TARSUS are set to 1, 0.1 and 1, respectively. Similarly, the residual matrix is unstructured and uses the same starting values.
+This has fitted a bivariate model of `BWT` and `TARSUS`, with the mean for each of the traits as a fixed effect (trait).
+The additive genetic variance-covariance matrix ($\mathbf{G}$) is unstructured (us; i.e. all elements are free to vary) and the starting values for $V_A$ for `BWT`, $COV_A$ between `BWT` and `TARSUS`, and $V_A$ for `TARSUS` are set to 1, 0.1 and 1, respectively. Similarly, the residual matrix is unstructured and uses the same starting values.
 
 Let’s have a look at the variance components, and notice that there are now six (co)variance components reported in the table:
 
@@ -407,10 +425,12 @@ summary(modela)$varcomp
 ## units:trait!trait_TARSUS:TARSUS            0.1
 ``` 
 
-The first three terms relate to the genetic matrix and, in order are VA,BWTVA,BWT​, COVACOVA​, VA,TARSUSVA,TARSUS​. Below is again a line where the units:traitr!R component equals 1, which again can be ignored. The final three terms relate to the residual matrix and correspond to VR,BWTVR,BWT​, COVRCOVR​, VR,TARSUSVR,TARSUS​. Based on our quick and dirty check (is z.ratio > 1.96?) all components look to be statistically significant.
+The first three terms relate to the genetic matrix and, in order are $V_{A,BWT}$, $COV_A$, $V_{A,TARSUS}$.
+Below is again a line where the `units:traitr!R` component equals 1, which again can be ignored.
+The final three terms relate to the residual matrix and correspond to $V_{R,BWT}$, $COV_R$, $V_{R,TARSUS}$. Based on our quick and dirty check (is z.ratio > 1.96?) all components look to be statistically significant.
 
-We can calculate the genetic correlation as COVA/VA,BWT⋅VA,TARSUS−−−−−−−−−−−−−−−√COVA​/VA,BWT​⋅VA,TARSUS​
-​. Thus this model gives an estimate of rArA​ = 0.38. Although we can calculate this by hand, we can also use vpredict(), which also provides an (approximate) standard error:
+We can calculate the genetic correlation as $COV_A/\sqrt{V_{A,BWT}V_{A,TARSUS}}$.
+Thus this model gives an estimate of rArA​ = 0.38. Although we can calculate this by hand, we can also use `vpredict()`, which also provides an (approximate) standard error:
 
 ``` r
 vpredict(modela, rA ~ V2/sqrt(V1*V3))
@@ -440,7 +460,8 @@ vpredict(modela, h2.tarsus ~ V3/(V3+V7))
 
 ### 4) Adding fixed and random effects
 
-Fixed and random effects can be added just as for the univariate case. Given that our full model of BWT from tutorial 1 had SEX as a fixed effect as well as random effects of BIRTH YEAR and MOTHER we could specify a bivariate formulation of this using:
+Fixed and random effects can be added just as for the univariate case.
+Given that our full model of BWT from tutorial 1 had SEX as a fixed effect as well as random effects of BIRTH YEAR and MOTHER we could specify a bivariate formulation of this using:
 
 ``` r
 modelb <- asreml(fixed = cbind(BWT, TARSUS) ~ trait + trait:SEX,
@@ -506,9 +527,10 @@ summary(modelb)$varcomp
 
 ### 5) Significance testing
 
-Under the model above rMrM​ is estimated as -0.66 and the z.ratio associated with the corresponding covariance (COVMCOVM​) is >2 (in absolute terms). We might therefore infer that there is evidence for a strong negative correlation between the traits with respect to the mother and that while maternal identity explains variance in both traits those mothers that tend to produce heavier offspring actually tend to produce offspring with shorter tarsus lengths.
+Under the model above $r_M$ is estimated as -0.66 and the z.ratio associated with the corresponding covariance ($COV_M$) is >2 (in absolute terms).
+We might therefore infer that there is evidence for a strong negative correlation between the traits with respect to the mother and that while maternal identity explains variance in both traits those mothers that tend to produce heavier offspring actually tend to produce offspring with shorter tarsus lengths.
 
-To formally test if COVMCOVM​ is significantly different from zero, we can compare the log-likelihood for this model:
+To formally test if $COV_M$ is significantly different from zero, we can compare the log-likelihood for this model:
 
 ``` r
 modelb$loglik
@@ -518,7 +540,8 @@ modelb$loglik
 ## [1] -2380.246
 ``` 
 
-to a model in which we specify that COVMCOVM​=0. Since this constraint reduces the number of parameters to be estimated by one, we can use a likelihood ratio test with one degree of freedom. To run the constrained model, we modify the G structure definition for the MOTHER random effect to diagonal (diag), which means we only estimate the variances (the diagonal of the matrix) but not the covariance:
+to a model in which we specify that $COV_M=0$. Since this constraint reduces the number of parameters to be estimated by one, we can use a likelihood ratio test with one degree of freedom.
+To run the constrained model, we modify the G structure definition for the MOTHER random effect to diagonal (`diag`), which means we only estimate the variances (the diagonal of the matrix) but not the covariance:
 
 ``` r
 modelc <- asreml(fixed = cbind(BWT, TARSUS) ~ trait + trait:SEX,
@@ -545,7 +568,7 @@ modelc <- asreml(fixed = cbind(BWT, TARSUS) ~ trait + trait:SEX,
 ##  9     -2386.045           1.0   1533 09:47:33    0.0
 ``` 
 
-You can run summary(modelc)$varcomp to confirm this worked. We can now obtain the log-likelihood of this model and compare this to that of modelb using a likelihood ratio test:
+You can run `summary(modelc)$varcomp` to confirm this worked. We can now obtain the log-likelihood of this model and compare this to that of `modelb` using a likelihood ratio test:
 
 ``` r
 modelc$loglik
@@ -565,7 +588,7 @@ We can see that the model log-likelihood is now -2386.05. And comparing the mode
 ## [1] 11.59831
 ``` 
 
-So our chi-square test statistic is χ21χ12​= 11.6. The p-value that goes with this is obtained by:
+So our chi-square test statistic is $\chi^2_1= 11.6$. The p-value that goes with this is obtained by:
 
 ``` r
 1-pchisq(2*(modelb$loglik-modelc$loglik),1)
@@ -577,11 +600,12 @@ So our chi-square test statistic is χ21χ12​= 11.6. The p-value that goes wit
 
 We would therefore conclude that the maternal covariance is significantly different from zero.
 
-We could apply the same procedure to show that the residual (environmental) covariance and the genetic covariance estimates are significantly greater than zero (i.e., heavier individuals tend to have longer tarsus lengths). In contrast, we should find that the BYEAR covariance between the two traits is non-significant.
+We could apply the same procedure to show that the residual (environmental) covariance and the genetic covariance estimates are significantly greater than zero (i.e., heavier individuals tend to have longer tarsus lengths).
+In contrast, we should find that the `BYEAR` covariance between the two traits is non-significant.
 
 ## Tutorial 3 – A repeated measures animal model
 
-This tutorial will demonstrate how to run a univariate animal model for a trait with repeated observations using the software ASReml-R and example data files provided.
+This tutorial will demonstrate how to run a univariate animal model for a trait with repeated observations using the software `ASReml-R` and example data files provided.
 
 ### 1) Scenario
 
@@ -589,7 +613,9 @@ Since gryphons are iteroparous, multiple observations of reproductive traits are
 
 ### 2) Data files
 
-The pedigree file gryphonped.txt is that used in the preceding tutorials but we now use a new data file gryphonRM.txt. Columns correspond to individual identity (ANIMAL), birth year (BYEAR), age in years (AGE), year of measurement (YEAR) and lay date (LAYDATE). Each row of the data file corresponds to a single phenotypic observation. Here data are sorted by identity and then age so that the repeated observations on individuals are readily apparent. However this is not a requirement for analysis - data could equally be sorted by some other variable (e.g., measurement year) or be in a random order.
+The pedigree file `gryphonped.txt` is that used in the preceding tutorials but we now use a new data file `gryphonRM.txt`. Columns correspond to individual identity (`ANIMAL`), birth year (`BYEAR`), age in years (`AGE`), year of measurement (`YEAR`) and lay date (`LAYDATE`).
+Each row of the data file corresponds to a single phenotypic observation. Here data are sorted by identity and then age so that the repeated observations on individuals are readily apparent. 
+However this is not a requirement for analysis - data could equally be sorted by some other variable (e.g., measurement year) or be in a random order.
 
 ``` r
 gryphonRM <- read.table("/the/path/to/gryphonRM.txt", 
@@ -616,7 +642,8 @@ head(gryphonRM)
 
 ### 3) Estimating repeatability
 
-With repeated measures on individuals it is often of interest, prior to fitting a genetic model, to see how repeatable a trait is. We can estimate the repeatability of a trait as the proportion of phenotypic variance explained by individual identity.
+With repeated measures on individuals it is often of interest, prior to fitting a genetic model, to see how repeatable a trait is.
+We can estimate the repeatability of a trait as the proportion of phenotypic variance explained by individual identity.
 
 ``` r
 modelv <- asreml(fixed = LAYDATE ~ 1, 
@@ -642,9 +669,9 @@ modelv <- asreml(fixed = LAYDATE ~ 1,
 ## 10      -3497.54           1.0   1606 09:47:33    0.0
 ``` 
 
-Note that since we want to estimate the amount of variance explained by individual identity (rather than by additive effects), we fit ANIMAL as a normal random effect and we don’t associate it with the pedigree.
+Note that since we want to estimate the amount of variance explained by individual identity (rather than by additive effects), we fit `ANIMAL` as a normal random effect and we don’t associate it with the pedigree.
 
-This model partitions the phenotypic variance in LAYDATE as follows:
+This model partitions the phenotypic variance in `LAYDATE` as follows:
 
 ``` r
 summary(modelv)$varcomp
@@ -657,9 +684,10 @@ summary(modelv)$varcomp
 ## units!R       1.00000        NA        NA     F   0
 ``` 
 
-Between-individual variance is given by the ANIMAL component, while the residual component (units!units) represents within-individual variance. Here then the repeatability of the trait can be determined by hand as 0.34 (i.e., as 11.086/(11.086 + 21.296)).
+Between-individual variance is given by the `ANIMAL` component, while the residual component (`units!units`) represents within-individual variance.
+Here then the repeatability of the trait can be determined by hand as 0.34 (i.e., as `11.086/(11.086 + 21.296)`).
 
-Mean lay date might change with age, so we could ask what the repeatability of lay date is after conditioning on age. This would be done by adding AGE into the model as a fixed effect.
+Mean lay date might change with age, so we could ask what the repeatability of lay date is after conditioning on age. This would be done by adding `AGE` into the model as a fixed effect.
 
 ``` r
 modelw <- asreml(fixed = LAYDATE ~ AGE, 
@@ -695,13 +723,18 @@ summary(modelw)$varcomp
 ## units!R       1.00000        NA       NA     F   0
 ``` 
 
-The repeatability of lay date, after accounting for age effects, is now estimated as 0.43 (i.e., as 12.29/(12.29 + 16.38)). So, just as we saw when estimating h2h2 in Tutorial 1, the inclusion of fixed effects will alter the estimated effect size if we determine total phenotypic variance as the sum of the variance components. Thus, proper interpretation is vital.
+The repeatability of lay date, after accounting for age effects, is now estimated as 0.43 (i.e., as `12.29/(12.29 + 16.38)`). 
+So, just as we saw when estimating $h^2$ in Tutorial 1, the inclusion of fixed effects will alter the estimated effect size if we determine total phenotypic variance as the sum of the variance components.
+Thus, proper interpretation is vital.
 
-Here age is modelled as a 5-level factor (specified using the function as.factor() at the beginning of the analysis). We could equally have fitted it as a continuous variable, in which case, given potential for a late life decline, we would probably also include a quadratic term.
+Here age is modelled as a 5-level factor (specified using the function `as.factor()` at the beginning of the analysis).
+We could equally have fitted it as a continuous variable, in which case, given potential for a late life decline, we would probably also include a quadratic term.
 
 ### 4) Partitioning additive and permanent environment effects
 
-Generally we expect that the repeatability will set the upper limit for heritability since, while additive genetic effects will cause among-individual variation, so will other types of effects. Non-additive contributions to fixed among-individual differences are normally referred to as permanent environment effects. If a trait has repeated measures then it is necessary to model permanent environment effects in an animal model to prevent upward bias in VAVA​.
+Generally we expect that the repeatability will set the upper limit for heritability since, while additive genetic effects will cause among-individual variation, so will other types of effects.
+Non-additive contributions to fixed among-individual differences are normally referred to as permanent environment effects.
+If a trait has repeated measures then it is necessary to model permanent environment effects in an animal model to prevent upward bias in $V_A$.
 
 To illustrate this fit the animal model:
 
@@ -741,7 +774,8 @@ summary.asreml(modelx)$varcomp
 ## units!R            1.00000        NA        NA     F   0
 ``` 
 
-This suggests that all of the among-individual variance is – rightly or wrongly – being partitioned as VAVA​ here. To instead obtain an unbiased estimate of VAVA​ we need to allow for both additive genetic and non-genetic sources of individual variation. We do this by fitting ANIMAL twice, once with a pedigree, and once without a pedigree (using ide()).
+This suggests that all of the among-individual variance is – rightly or wrongly – being partitioned as $V_A$ here. To instead obtain an unbiased estimate of $V_A$ we need to allow for both additive genetic and non-genetic sources of individual variation.
+We do this by fitting `ANIMAL` twice, once with a pedigree, and once without a pedigree (using `ide()`).
 
 ``` r
 modely <- asreml(fixed = LAYDATE ~ AGE, 
@@ -777,7 +811,7 @@ summary(modely)$varcomp
 ## units!R           1.000000        NA        NA     F   0
 ``` 
 
-The estimate of VAVA​ is now much lower since the additive and permanent environment effects are being properly separated. We can estimate h2h2 and the repeatability from this model:
+The estimate of $V_A$ is now much lower since the additive and permanent environment effects are being properly separated. We can estimate h2h2 and the repeatability from this model:
 
 ``` r
 vpredict(modely, h2 ~ V1/(V1+V2+V3))
@@ -798,7 +832,7 @@ vpredict(modely, repeatability ~ (V1+V2)/(V1+V2+V3))
 
 ### 5) Adding additional effects and testing significance
 
-Models of repeated measures can be extended to include other fixed or random effects. For example try including year of measurement (YEAR) and birth year (BYEAR) as random effects.
+Models of repeated measures can be extended to include other fixed or random effects. For example try including year of measurement (`YEAR`) and birth year (`BYEAR`) as random effects.
 
 ``` r
 modelz <- asreml(fixed = LAYDATE ~ AGE,
@@ -838,6 +872,8 @@ summary(modelz)$varcomp
 ## units!R          1.000000e+00        NA        NA     F   0
 ``` 
 
-This model will return additional variance components corresponding to variation in lay dates between years of measurement and between birth cohorts of females. VBYEARVBYEAR​ is very low and if you compare this model to a reduced model with BYEAR excluded the log-likelihood remains unchanged.
+This model will return additional variance components corresponding to variation in lay dates between years of measurement and between birth cohorts of females.
+$V_'BYEAR} is very low and if you compare this model to a reduced model with BYEAR excluded the log-likelihood remains unchanged.
 
-YEAR effects could alternatively be included as fixed effects (try this!). This will reduce VRVR​ and increase the estimates of heritability and repeatability, which must now be interpreted as proportions of phenotypic variance after conditioning on both age and year of measurement effects.
+`YEAR` effects could alternatively be included as fixed effects (try this!).
+This will reduce $V_R$ and increase the estimates of heritability and repeatability, which must now be interpreted as proportions of phenotypic variance after conditioning on both age and year of measurement effects.
