@@ -1,7 +1,7 @@
 
 ---
 title: "Self-contained tutorials"
-linkTitle: "Tutorials"
+linkTitle: "Self-containted tutorials"
 weight: 8
 date: 2023-01-29
 description: >
@@ -12,7 +12,7 @@ description: >
   This is a collection of self-contained tutorials developped for classes and workshops
 {{% /pageinfo %}}
 
-* Erik Postma's Animal models in ASReml-R v4 [Tutorial-ASReml-R-v4.html](Tutorial-ASReml-R-v4.html)
+* Erik Postma's Animal models in ASReml-R v4 [Tutorial-ASReml-R-v4](tutorial-asreml-r-v4/)
 
 * Julien Martin's Animal models using multiple R packages (asreml, MCMCglmm, brms, stan, gremlin) [WAM tutorial in R](https://juliengamartin.github.io/wam_tuto/)
 
