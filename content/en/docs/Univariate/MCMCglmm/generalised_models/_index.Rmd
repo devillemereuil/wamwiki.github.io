@@ -17,8 +17,8 @@ knitr::opts_chunk$set(
   )
 ```
 
-{{% alert title="Permanent environment" color="primary" %}}
-When traits are non-Gaussain (i.e. we cannot assume the residual of a linear model will follow a normal distribution), like survival or (often) fecundity, we need to use models that extend the principals of the animal models beyond the normal distribution.
+{{% alert title="Non-Gaussian traits" color="primary" %}}
+When traits are non-Gaussian (i.e. we cannot assume the residual of a linear model will follow a normal distribution), like survival or (often) fecundity, we need to use models that extend the principals of the animal models beyond the normal distribution.
 Such models are called generalised linear mixed models (GLMMs), or generalised animal models in our case, and can be implemented in MCMCglmm relatively easily, by specifying another "family" of distribution.
 {{% /alert %}}
 
